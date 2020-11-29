@@ -17,5 +17,5 @@ This project was broken into discrete processing units implemented primarily in 
 
 Most of the notebooks and datasets have been made publicly available on Kaggle.  Everything else is in this repository.
 
-- Crop Cats and Dogs YOLOv3 [Notebook](https://www.kaggle.com/bobbo1/crop-cats-and-dogs-yolov3) [Dataset](https://www.kaggle.com/bobbo1/cropped-cats-and-dogs)
-- Augment Cats and Dogs YOLOv3 [Notebook](https://www.kaggle.com/bobbo1/augment-cats-and-dogs) [Dataset](https://www.kaggle.com/bobbo1/augmented-cats-and-dogs)
+- Crop Cats and Dogs YOLOv3 [Notebook](https://www.kaggle.com/bobbo1/crop-cats-and-dogs-yolov3) [Dataset](https://www.kaggle.com/bobbo1/cropped-cats-and-dogs){:target="_blank"}
+- Augment Cats and Dogs YOLOv3 [Notebook](https://www.kaggle.com/bobbo1/augment-cats-and-dogs) [Dataset](https://www.kaggle.com/bobbo1/augmented-cats-and-dogs){:target="_blank"}
