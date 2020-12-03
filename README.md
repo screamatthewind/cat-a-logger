@@ -8,7 +8,7 @@ This project proposes a solution using Deep Learning to keep track of outdoor ca
 
 Metadata can include but is not limited to: The coming and goings of a particular cat over time, their vaccination, health, and reproductive status.
 
-Checkout the [Slide Presentation] (https://github.com/screamatthewind/cat-a-logger/blob/main/Slide%20Presentation.pdf).  It contains a lot of information including the BOM's and wiring diagrams.
+Checkout the [Slide Presentation](https://github.com/screamatthewind/cat-a-logger/blob/main/Slide%20Presentation.pdf).  It contains a lot of information including the BOM's and wiring diagrams.
 
 ## Inferencing Engine
 
@@ -28,4 +28,4 @@ Most of the notebooks and datasets have been made publicly available on [Kaggle]
 
 - Crop Cats and Dogs YOLOv3 [Notebook](https://www.kaggle.com/screamatthewind/crop-cats-and-dogs-yolov3) [Dataset](https://www.kaggle.com/screamatthewind/cropped-cats-and-dogs)  
 - Augment Cats and Dogs YOLOv3 [Notebook](https://www.kaggle.com/screamatthewind/augment-cats-and-dogs) [Dataset](https://www.kaggle.com/screamatthewind/augmented-cats-and-dogs)  
-- Randomize Background for Cats and Dogs [Notebook](https://www.kaggle.com/screamatthewind/randomize-backgrounds-for-cats-and-dogs) [Dataset] (https://www.kaggle.com/screamatthewind/random-backgrounds-for-cats-and-dogs)  
+- Randomize Background for Cats and Dogs [Notebook](https://www.kaggle.com/screamatthewind/randomize-backgrounds-for-cats-and-dogs) [Dataset](https://www.kaggle.com/screamatthewind/random-backgrounds-for-cats-and-dogs)  
