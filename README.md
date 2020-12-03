@@ -8,7 +8,7 @@ This project proposes a solution using Deep Learning to keep track of outdoor ca
 
 Metadata can include but is not limited to: The coming and goings of a particular cat over time, their vaccination, health, and reproductive status.
 
-Checkout the Slide Presentation.  It contains a lot of information including the BOM's and wiring diagrams.
+Checkout the [Slide Presentation] (https://github.com/screamatthewind/cat-a-logger/blob/main/Slide%20Presentation.pdf).  It contains a lot of information including the BOM's and wiring diagrams.
 
 ## Inferencing Engine
 
