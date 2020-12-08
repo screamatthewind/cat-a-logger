@@ -14,10 +14,10 @@ Checkout the [Slide Presentation](https://github.com/screamatthewind/cat-a-logge
 
 The NVIDIA Jetson Nano was chosen as the Server and Inference Device because of its relatively small size and low-cost to performance ratio  
   
-In operation, the Nano receives video full-time as an RTSP Stream but does not process it until triggered over Wifi by the ESP32 connected PIR Motion Detector in the Cat Box
+In operation, the Nano receives video full-time as an RTSP Stream but does not process it until triggered over Wifi by the ESP32 connected PIR Motion Detector in the Cat Box.
 When the Server is triggered, it begins recording and running inferences to determine whether the heat signature detected by the PIR belongs to a cat.  Recorded video and detections are manually reviewed for accuracy and the results fed back into the model for further training
 In addition, each hour the ESP32 in the Cat Box sends battery voltage and vital statistics to the server.  This acts as a Ping to inform the server the Cat Box is alive and well
-Communication from the ESP32 is performed over Wifi using a rudimentary REST API on the Jetson
+Communication from the ESP32 is performed over Wifi using a rudimentary REST API on the Jetson.
 
 
 ## Model Builder Project Structure
