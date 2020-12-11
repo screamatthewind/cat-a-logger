@@ -21,14 +21,21 @@ void RestApi::startWifi()
         delay(500);
     }
 
-    int i = 1;
-    xQueueSend(mainQueue, &i, 0);
+    ReturnData returnData;
+
+    if (WiFi.status() == WL_CONNECTED)
+        returnData.dataType = WIFI_STARTED;
+    else
+        returnData.dataType = WIFI_ERROR;
+    
+    xQueueSend(mainQueue, &returnData, 0);
 }
 
 void RestApi::stopWifi()
 {
-    int i = 2;
-    xQueueSend(mainQueue, &i, 0);
+    ReturnData returnData;
+    returnData.dataType = WIFI_STOPPED;
+    xQueueSend(mainQueue, &returnData, 0);
 }
 
 void RestApi::callPost()
@@ -56,9 +63,21 @@ void RestApi::callPost()
 
         http.end();
 
-        xQueueSend(mainQueue, &httpResponseCode, 0);
+        ReturnData returnData;
+
+        if (httpResponseCode == 200)
+            returnData.dataType = REST_POST_OK;
+        else
+            returnData.dataType = REST_POST_ERROR;
+        
+        returnData.message = String(httpResponseCode);
+
+        xQueueSend(mainQueue, &returnData, 0);
     }
     else
     {
+        ReturnData returnData;
+        returnData.dataType = REST_POST_ERROR;
+        xQueueSend(mainQueue, &returnData, 0);
     }
 };

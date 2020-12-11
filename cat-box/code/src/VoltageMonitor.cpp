@@ -28,6 +28,10 @@ void VoltageMonitor::readVoltage()
   }
 
   finalValue = (adSum / samples) / voltageDivisor;
-  int returnValue = (int) finalValue * 10;
-  xQueueSend(mainQueue, &returnValue, 0);
+  String returnValue = String(finalValue);
+
+  ReturnData returnData;
+  returnData.dataType = VOLTAGE;
+  returnData.message = returnValue;
+  xQueueSend(mainQueue, &returnData, 0);
 };
