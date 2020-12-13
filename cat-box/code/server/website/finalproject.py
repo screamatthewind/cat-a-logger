@@ -2,10 +2,12 @@ from flask import Flask, render_template, request, redirect, jsonify, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
+import json
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///restaurantmenu.db', connect_args={'check_same_thread': False})
+engine = create_engine('sqlite:///restaurantmenu.db',
+                       connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -53,7 +55,20 @@ def showRestaurants():
     return render_template('restaurants.html', restaurants=restaurants)
 
 
+@app.route('/api/restaurant/new/', methods=['POST'])
+def apiNewRestaurant():
+    obj = json.loads('{"name": "hello"}')
+    newRestaurant = Restaurant(**obj)
+    print(newRestaurant)
+    session.add(newRestaurant)
+    session.commit()
+    json2 = json.dumps(newRestaurant.to_dict())
+    print(json2)
+    return json2
+
 # Create a new restaurant
+
+
 @app.route('/restaurant/new/', methods=['GET', 'POST'])
 def newRestaurant():
     if request.method == 'POST':
