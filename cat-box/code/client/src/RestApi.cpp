@@ -50,25 +50,19 @@ void RestApi::callPost()
 
         http.begin(serverName);
 
-        http.addHeader("Content-Type", "application/json");
-        String httpRequestData = "{\"voltage\": \"11.0\"}";
+        http.addHeader("Content-Type", "application/vnd.api+json");
+        http.addHeader("Accept", "application/vnd.api+json");
+
+        String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": 1}}}";
         Serial.print(httpRequestData);
 
         int httpResponseCode = http.POST(httpRequestData);
-
-        // If you need an HTTP request with a content type: application/json, use the following:
-        //http.addHeader("Content-Type", "application/json");
-        //int httpResponseCode = http.POST("{\"api_key\":\"tPmAT5Ab3j7F9\",\"sensor\":\"BME280\",\"value1\":\"24.25\",\"value2\":\"49.54\",\"value3\":\"1005.14\"}");
-
-        // If you need an HTTP request with a content type: text/plain
-        //http.addHeader("Content-Type", "text/plain");
-        //int httpResponseCode = http.POST("Hello, World!");
 
         http.end();
 
         ReturnData returnData;
 
-        if (httpResponseCode == 200)
+        if (httpResponseCode == 201)
             returnData.dataType = REST_POST_OK;
         else
             returnData.dataType = REST_POST_ERROR;
