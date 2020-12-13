@@ -23,8 +23,10 @@ void RestApi::startWifi()
 
     ReturnData returnData;
 
-    if (WiFi.status() == WL_CONNECTED)
+    if (WiFi.status() == WL_CONNECTED) {
         returnData.dataType = WIFI_STARTED;
+        Serial.print(WiFi.localIP());
+    }
     else
         returnData.dataType = WIFI_ERROR;
     
@@ -40,7 +42,7 @@ void RestApi::stopWifi()
 
 void RestApi::callPost()
 {
-    const char *serverName = "https://reqbin.com/echo/post/json";
+    const char *serverName = "http://10.0.0.83:5000/api/catalogger";
 
     if (WiFi.status() == WL_CONNECTED)
     {
@@ -48,8 +50,9 @@ void RestApi::callPost()
 
         http.begin(serverName);
 
-        http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        String httpRequestData = "api_key=tPmAT5Ab3j7F9&sensor=BME280&value1=24.25&value2=49.54&value3=1005.14";
+        http.addHeader("Content-Type", "application/json");
+        String httpRequestData = "{\"voltage\": \"11.0\"}";
+        Serial.print(httpRequestData);
 
         int httpResponseCode = http.POST(httpRequestData);
 

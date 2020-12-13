@@ -21,8 +21,15 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(64))
-    author_id = Column(Integer,
-                       ForeignKey("author.id"), nullable=True)
-    author = relationship(Author,
-                          backref=backref('books'))
+    author_id = Column(Integer, ForeignKey("author.id"), nullable=True)
+    author = relationship(Author, backref=backref('books'))
     is_available = Column(Boolean)
+
+
+class Catalogger(Base):
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower()
+
+    id = Column(Integer, primary_key=True)
+    voltage = Column(String(64))
