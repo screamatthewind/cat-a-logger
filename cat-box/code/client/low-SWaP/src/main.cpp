@@ -8,6 +8,7 @@
 #define SHOW_STACK_REMAINING 1
 
 const int maxRunTime = 30; // seconds
+const int motionSensor = 27;
 
 QueueHandle_t mainQueue;
 int queueSize = 20;
@@ -16,6 +17,8 @@ void startListener(void *parameter);
 void startWifiTask(void *parameter);
 void voltageMonitorTask(void *parameter);
 void healthCheckTask(void *parameter);
+void motionDetectedTask(void *parameter);
+void IRAM_ATTR motionDetected();
 
 void setup()
 {
@@ -33,6 +36,12 @@ void setup()
   xTaskCreate(startWifiTask, "StartWifiTask", 2048, NULL, 1, NULL); 
   xTaskCreate(voltageMonitorTask, "VoltageMonitorTask", 1024, NULL, 1, NULL); 
   xTaskCreate(healthCheckTask, "HealthCheckTask", 2048, NULL, 1, NULL); 
+
+  // PIR Motion Sensor mode INPUT_PULLUP
+  pinMode(motionSensor, INPUT_PULLUP);
+  // Set motionSensor pin as interrupt, assign interrupt function and set RISING mode
+  attachInterrupt(digitalPinToInterrupt(motionSensor), motionDetected, RISING);
+
 }
 
 void loop()
@@ -40,13 +49,31 @@ void loop()
   delay(100000);
 }
 
+void IRAM_ATTR motionDetected() {
+  xTaskCreate(motionDetectedTask, "motionDetectedTask", 2048, NULL, 1, NULL); 
+}
+
+void motionDetectedTask(void *parameter)
+{
+  RestApi restApi;
+  String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": " + String(MOTION_DETECTED) + "}}}";
+  restApi.callPost(httpRequestData);
+
+  #ifdef SHOW_STACK_REMAINING
+    UBaseType_t uxHighWaterMark;
+    uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
+    Serial.print("motionDetectedTask-stack-2: ");
+    Serial.println(uxHighWaterMark);
+  #endif
+
+  vTaskDelete(NULL);
+}
+
 void startWifiTask(void *parameter)
 {
   RestApi restApi;
 
   restApi.startWifi();
-//  restApi.callPost();
-//  restApi.stopWifi();
 
   #ifdef SHOW_STACK_REMAINING
     UBaseType_t uxHighWaterMark;
@@ -125,7 +152,8 @@ void startListener(void *parameter)
     Serial.println(uxHighWaterMark);
   #endif
 
-  restApi.callPost();
+  String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": " + String(STATUS_UPDATE) + "}}}";
+  restApi.callPost(httpRequestData);
   delay(1000);
 
   restApi.stopWifi();

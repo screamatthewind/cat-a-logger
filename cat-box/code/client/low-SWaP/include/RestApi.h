@@ -7,7 +7,7 @@ public:
   RestApi();
   void startWifi();
   void stopWifi();
-  void callPost();
+  void callPost(String);
   void callHealthCheck();
   bool isWiFiUp();
 };

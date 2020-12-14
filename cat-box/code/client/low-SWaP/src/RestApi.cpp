@@ -101,7 +101,7 @@ void RestApi::callHealthCheck()
     }
 }
 
-void RestApi::callPost()
+void RestApi::callPost(String httpRequestData)
 {
     ReturnData returnData;
 
@@ -122,7 +122,7 @@ void RestApi::callPost()
         http.addHeader("Content-Type", "application/vnd.api+json");
         http.addHeader("Accept", "application/vnd.api+json");
 
-        String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": 1}}}";
+        // String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": 1}}}";
         // Serial.println(httpRequestData);
 
         int httpResponseCode = http.POST(httpRequestData);
