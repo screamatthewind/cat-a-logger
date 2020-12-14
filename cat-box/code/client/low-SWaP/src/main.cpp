@@ -15,6 +15,7 @@ int queueSize = 20;
 void startListener(void *parameter);
 void startWifiTask(void *parameter);
 void voltageMonitorTask(void *parameter);
+void healthCheckTask(void *parameter);
 
 void setup()
 {
@@ -28,9 +29,10 @@ void setup()
     Serial.println("Error creating the queue");
   }
 
-  xTaskCreate(startListener, "ListenerTask", 1024, NULL, 1, NULL);
-  xTaskCreate(startWifiTask, "StartWifiTask", 4196, NULL, 1, NULL); 
+  xTaskCreate(startListener, "ListenerTask", 2048, NULL, 1, NULL);
+  xTaskCreate(startWifiTask, "StartWifiTask", 2048, NULL, 1, NULL); 
   xTaskCreate(voltageMonitorTask, "VoltageMonitorTask", 1024, NULL, 1, NULL); 
+  xTaskCreate(healthCheckTask, "HealthCheckTask", 2048, NULL, 1, NULL); 
 }
 
 void loop()
@@ -43,8 +45,8 @@ void startWifiTask(void *parameter)
   RestApi restApi;
 
   restApi.startWifi();
-  restApi.callPost();
-  restApi.stopWifi();
+//  restApi.callPost();
+//  restApi.stopWifi();
 
   #ifdef SHOW_STACK_REMAINING
     UBaseType_t uxHighWaterMark;
@@ -71,8 +73,24 @@ void voltageMonitorTask(void *parameter)
   vTaskDelete(NULL);
 }
 
+void healthCheckTask(void *parameter)
+{
+  RestApi restApi;
+  restApi.callHealthCheck();
+
+  #ifdef SHOW_STACK_REMAINING
+    UBaseType_t uxHighWaterMark;
+    uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
+    Serial.print("healthCheckTask-stack-1: ");
+    Serial.println(uxHighWaterMark);
+  #endif
+
+  vTaskDelete(NULL);
+}
+
 void startListener(void *parameter)
 {
+  RestApi restApi;
   ReturnData receivedData;
 
   for( int i=0; i<maxRunTime; i++ )
@@ -89,6 +107,10 @@ void startListener(void *parameter)
         Serial.print("VOLTAGE: ");
         Serial.println(receivedData.message);
       }
+      else if (receivedData.dataType == HEALTH_CHECK_ERROR) {
+        Serial.print("HEALTH_CHECK_ERROR: ");
+        Serial.println(receivedData.message);
+      }
       else
         Serial.println(DataTypeStrings[receivedData.dataType]);
     }
@@ -102,6 +124,12 @@ void startListener(void *parameter)
     Serial.print("startListener-stack-2: ");
     Serial.println(uxHighWaterMark);
   #endif
+
+  restApi.callPost();
+  delay(1000);
+
+  restApi.stopWifi();
+  delay(1000);
 
   Serial.print("Powering Down");
 

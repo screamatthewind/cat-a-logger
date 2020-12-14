@@ -8,5 +8,7 @@ public:
   void startWifi();
   void stopWifi();
   void callPost();
+  void callHealthCheck();
+  bool isWiFiUp();
 };
 #endif

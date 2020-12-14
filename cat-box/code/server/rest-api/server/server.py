@@ -40,5 +40,9 @@ manager = flask_restless.APIManager(
 # default. Allowed HTTP methods can be specified as well.
 manager.create_api(Catalogger, methods=['GET', 'POST', 'DELETE'])
 
+@app.route("/api/check")
+def health_check():
+  return "ok"
+
 # start the flask loop
 app.run(host="0.0.0.0")
