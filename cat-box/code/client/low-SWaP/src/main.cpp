@@ -49,6 +49,7 @@ void loop()
   delay(100000);
 }
 
+// https://randomnerdtutorials.com/esp32-pir-motion-sensor-interrupts-timers/
 void IRAM_ATTR motionDetected() {
   xTaskCreate(motionDetectedTask, "motionDetectedTask", 2048, NULL, 1, NULL); 
 }
@@ -56,7 +57,7 @@ void IRAM_ATTR motionDetected() {
 void motionDetectedTask(void *parameter)
 {
   RestApi restApi;
-  String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": " + String(MOTION_DETECTED) + "}}}";
+  String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"eventType\": " + String(MOTION_DETECTED) + "}}}";
   restApi.callPost(httpRequestData);
 
   #ifdef SHOW_STACK_REMAINING

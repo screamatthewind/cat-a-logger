@@ -2,7 +2,7 @@ import flask
 import flask_sqlalchemy
 import flask_restless
 from EventType import EventType
-
+from datetime import datetime
 
 def check_event(instance_id=None, **kw):
 
@@ -27,6 +27,7 @@ class Catalogger(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     voltage = db.Column(db.String)
     eventType = db.Column(db.Integer)
+    eventDateTime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
 # Create the database tables.
