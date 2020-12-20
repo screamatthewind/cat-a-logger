@@ -1,3 +1,4 @@
 /VARIOUS EXAMPLE NOTEBOOKS
 **/*.lib
 **/*.sch-bak
+.ipynb_checkpoints
