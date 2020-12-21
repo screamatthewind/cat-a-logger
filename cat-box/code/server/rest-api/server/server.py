@@ -4,9 +4,10 @@ import flask_restless
 from EventType import EventType
 from datetime import datetime
 
+
 def check_event(instance_id=None, **kw):
 
-    eventType = int(kw['result']['data']['attributes']['eventType'])
+    eventType = int(kw["result"]["data"]["attributes"]["eventType"])
     if eventType == EventType.MOTION_DETECTED:
         print("MOTION_DETECTED")
     elif eventType == EventType.STATUS_UPDATE:
@@ -17,9 +18,9 @@ def check_event(instance_id=None, **kw):
 
 # Create the Flask application and the Flask-SQLAlchemy object.
 app = flask.Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///catalogger.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["DEBUG"] = True
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///catalogger.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = flask_sqlalchemy.SQLAlchemy(app)
 
 
@@ -35,15 +36,18 @@ db.create_all()
 
 # Create the Flask-Restless API manager.
 manager = flask_restless.APIManager(
-    app, flask_sqlalchemy_db=db, postprocessors=dict(POST_RESOURCE=[check_event]))
+    app, flask_sqlalchemy_db=db, postprocessors=dict(POST_RESOURCE=[check_event])
+)
 
 # Create API endpoints, which will be available at /api/<tablename> by
 # default. Allowed HTTP methods can be specified as well.
-manager.create_api(Catalogger, methods=['GET', 'POST', 'DELETE'])
+manager.create_api(Catalogger, methods=["GET", "POST", "DELETE"])
+
 
 @app.route("/api/check")
 def health_check():
-  return "ok"
+    return "ok"
+
 
 # start the flask loop
 app.run(host="0.0.0.0")
