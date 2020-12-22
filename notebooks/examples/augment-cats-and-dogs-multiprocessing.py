@@ -2,7 +2,8 @@
 # Done Augmenting Images - Total Time: 5256.6 Secs
 # 62K input images, 250K output images
 # All CPU's were at 100%
-# this was actually the 2nd run.  First run started on 12/20 and was killed after 12+ hours.  It was single threaded.  CPU was poking along at around 10%
+# This was actually the 2nd run.  First run started on 12/20 and was killed after 22 hours 18 mins and 360,816 outputs.  
+# It was single threaded.  CPU was poking along at around 10%
 
 import os
 
@@ -17,7 +18,7 @@ else:
 
 if isLocalhost:
     # INPUT_FILES = '../output/cropped-cats-and-dogs/*.jpg'
-    INPUT_FILES = "../input/dogs-vs-cats-redux-kernels-edition/train/*.jpg"
+    INPUT_FILES = "../output/cropped-cats-and-dogs/*.jpg"
 
 else:
     INPUT_FILES = "/kaggle/input/cropped-cats-and-dogs/*.jpg"
