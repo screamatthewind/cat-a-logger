@@ -1,9 +1,14 @@
-# first run on 12/21/2020 1-1/2 hours
-# Done Augmenting Images - Total Time: 5256.6 Secs
-# 62K input images, 250K output images
+https://awesomeopensource.com/project/stratospark/keras-multiprocess-image-data-generator
+https://www.tensorflow.org/guide/data_performance
+https://github.com/Ximilar-com/tf-image
+https://www.wouterbulten.nl/blog/tech/data-augmentation-using-tensorflow-data-dataset/#code
+
+# first run on 12/22/2020 3 hrs 11 mins
+# 62K input images, 580K output images
 # All CPU's were at 100%
 # This was actually the 2nd run.  First run started on 12/20 and was killed after 22 hours 18 mins and 360,816 outputs.  
 # It was single threaded.  CPU was poking along at around 10%
+# 120 images / minute vs 3 images / minute
 
 import os
 
