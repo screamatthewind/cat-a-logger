@@ -1,4 +1,4 @@
-import flask
+import flask 
 import flask_sqlalchemy
 import flask_restless
 from EventType import EventType
@@ -47,6 +47,14 @@ manager.create_api(Catalogger, methods=["GET", "POST", "DELETE"])
 @app.route("/api/check")
 def health_check():
     return "ok"
+
+
+# Python Program to Get IP Address
+import socket
+
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+print("Listening on http://" + IPAddr + ":5000")
 
 
 # start the flask loop

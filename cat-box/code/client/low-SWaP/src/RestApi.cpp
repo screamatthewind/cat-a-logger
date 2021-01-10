@@ -6,7 +6,7 @@
 #include "creds.h"
 #include "RestApi.h"
 
-String serverName = "http://10.0.0.83:5000";
+String serverName = kSERVER;
 
 RestApi::RestApi(){};
 
