@@ -1,5 +1,5 @@
-#ifndef VOLTAGE_MONITOR_H
-#define VOLTAGE_MONITOR_H    
+#ifndef _VOLTAGE_MONITOR_H
+#define _VOLTAGE_MONITOR_H    
 
 #include "main.h"
 

@@ -10,5 +10,6 @@ public:
   void startWifi();
   void stopWifi();
   bool isWiFiUp();
+  IPAddress getIp();
 };
 #endif

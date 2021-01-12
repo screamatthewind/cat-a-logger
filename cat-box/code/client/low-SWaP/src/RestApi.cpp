@@ -42,6 +42,8 @@ void RestApi::callHealthCheck()
             returnData.dataType = HEALTH_CHECK_ERROR;
 
         returnData.message = String(httpResponseCode);
+        returnData.rssi = WiFi.RSSI(); // in db
+        returnData.ipAddress = WiFi.localIP();
 
         xQueueSend(mainQueue, &returnData, 0);
     }

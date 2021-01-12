@@ -53,4 +53,9 @@ bool WiFiUtils::isWiFiUp()
         result = true;
 
     return result;
-};
+}
+
+IPAddress WiFiUtils::getIp() {
+    return WiFi.localIP();
+}
+

@@ -1,8 +1,10 @@
 #include <Arduino.h>
+#include <ArduinoOTA.h>
 #include <FreeRTOS.h>
 
 #include "main.h"
 #include "Creds.h"
+#include "Ota.h"
 #include "RestApi.h"
 #include "VoltageMonitor.h"
 
@@ -10,17 +12,20 @@
 
 const int maxRunTime = 30; // seconds
 const int motionSensor = 27;
+const OperatingMode operatingMode = OTA; // cannot use LOW_SWAP and OTA at the same time
 
 QueueHandle_t mainQueue;
-int queueSize = 20;
+const int queueSize = 20;
 
-WiFiUtils wifiUtils = WiFiUtils();
-RestApi restApi = RestApi();
+WiFiUtils wifiUtils;
+RestApi restApi;
+Ota ota;
 
 void startListener(void *parameter);
 void startWifiTask(void *parameter);
 void voltageMonitorTask(void *parameter);
 void healthCheckTask(void *parameter);
+void deepSleepTask(void *parameter);
 void motionDetectedTask(void *parameter);
 void IRAM_ATTR motionDetected();
 
@@ -30,16 +35,22 @@ void setup()
   Serial.println("Starting");
 
   mainQueue = xQueueCreate(queueSize, sizeof(ReturnData));
+  
+  wifiUtils = WiFiUtils();
+  restApi = RestApi();
 
   if (mainQueue == NULL)
   {
     Serial.println("Error creating the queue");
   }
 
-  xTaskCreate(startListener, "ListenerTask", 2048, NULL, 1, NULL);
+  xTaskCreate(startListener, "ListenerTask", 3000, NULL, 1, NULL);
   xTaskCreate(startWifiTask, "StartWifiTask", 2048, NULL, 1, NULL); 
   xTaskCreate(voltageMonitorTask, "VoltageMonitorTask", 1024, NULL, 1, NULL); 
   xTaskCreate(healthCheckTask, "HealthCheckTask", 2048, NULL, 1, NULL); 
+
+  if (operatingMode == LOW_SWAP)
+    xTaskCreate(deepSleepTask, "DeepSleepTask", 1024, NULL, 1, NULL);
 
   // PIR Motion Sensor mode INPUT_PULLUP
   pinMode(motionSensor, INPUT_PULLUP);
@@ -50,12 +61,17 @@ void setup()
 
 void loop()
 {
-  delay(100000);
+  if ((operatingMode == OTA) && (ota.isStarted())) {
+    ota.keepAlive();
+    delay(100);
+  }
+  else
+    delay(100000);
 }
 
 // https://randomnerdtutorials.com/esp32-pir-motion-sensor-interrupts-timers/
 void IRAM_ATTR motionDetected() {
-  xTaskCreate(motionDetectedTask, "motionDetectedTask", 2048, NULL, 1, NULL); 
+  xTaskCreate(motionDetectedTask, "motionDetectedTask", 2400, NULL, 1, NULL); 
 }
 
 void motionDetectedTask(void *parameter)
@@ -116,6 +132,18 @@ void healthCheckTask(void *parameter)
   vTaskDelete(NULL);
 }
 
+void deepSleepTask(void *parameter)
+{
+  #ifdef SHOW_STACK_REMAINING
+    UBaseType_t uxHighWaterMark;
+    uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
+    Serial.print("healthCheckTask-stack-1: ");
+    Serial.println(uxHighWaterMark);
+  #endif
+
+  vTaskDelete(NULL);
+}
+
 void startListener(void *parameter)
 {
   ReturnData receivedData;
@@ -126,7 +154,16 @@ void startListener(void *parameter)
     {
       Serial.print("received: ");
 
-      if (receivedData.dataType == REST_POST_ERROR) {
+      if (receivedData.dataType == WIFI_STARTED) {
+        Serial.print("WiFi Started: ");
+        Serial.println(receivedData.message);
+        if (operatingMode == OTA)
+        {
+          ota = Ota();
+          ota.start();
+        }
+      }
+      else if (receivedData.dataType == REST_POST_ERROR) {
         Serial.print("POST ERROR: ");
         Serial.println(receivedData.message);
       }
@@ -159,7 +196,7 @@ void startListener(void *parameter)
   wifiUtils.stopWifi();
   delay(1000);
 
-  Serial.print("Powering Down");
+  Serial.println("Powering Down");
 
   vTaskDelete(NULL);
 }
