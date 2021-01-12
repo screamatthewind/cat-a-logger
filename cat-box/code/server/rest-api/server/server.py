@@ -28,7 +28,7 @@ class Catalogger(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     voltage = db.Column(db.String)
     eventType = db.Column(db.Integer)
-    eventDateTime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    eventDateTime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
 
 # Create the database tables.

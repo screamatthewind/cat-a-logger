@@ -1,14 +1,13 @@
-#ifndef REST_API_H
-#define REST_API_H
+#ifndef _REST_API_H
+#define _REST_API_H
+
+#include "main.h"
 
 class RestApi
 {
 public:
   RestApi();
-  void startWifi();
-  void stopWifi();
   void callPost(String);
   void callHealthCheck();
-  bool isWiFiUp();
 };
 #endif

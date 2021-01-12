@@ -2,6 +2,7 @@
 #include <FreeRTOS.h>
 
 #include "main.h"
+#include "Creds.h"
 #include "RestApi.h"
 #include "VoltageMonitor.h"
 
@@ -12,6 +13,9 @@ const int motionSensor = 27;
 
 QueueHandle_t mainQueue;
 int queueSize = 20;
+
+WiFiUtils wifiUtils = WiFiUtils();
+RestApi restApi = RestApi();
 
 void startListener(void *parameter);
 void startWifiTask(void *parameter);
@@ -56,7 +60,6 @@ void IRAM_ATTR motionDetected() {
 
 void motionDetectedTask(void *parameter)
 {
-  RestApi restApi;
   String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"eventType\": " + String(MOTION_DETECTED) + "}}}";
   restApi.callPost(httpRequestData);
 
@@ -72,9 +75,7 @@ void motionDetectedTask(void *parameter)
 
 void startWifiTask(void *parameter)
 {
-  RestApi restApi;
-
-  restApi.startWifi();
+  wifiUtils.startWifi();
 
   #ifdef SHOW_STACK_REMAINING
     UBaseType_t uxHighWaterMark;
@@ -103,7 +104,6 @@ void voltageMonitorTask(void *parameter)
 
 void healthCheckTask(void *parameter)
 {
-  RestApi restApi;
   restApi.callHealthCheck();
 
   #ifdef SHOW_STACK_REMAINING
@@ -118,7 +118,6 @@ void healthCheckTask(void *parameter)
 
 void startListener(void *parameter)
 {
-  RestApi restApi;
   ReturnData receivedData;
 
   for( int i=0; i<maxRunTime; i++ )
@@ -157,7 +156,7 @@ void startListener(void *parameter)
   restApi.callPost(httpRequestData);
   delay(1000);
 
-  restApi.stopWifi();
+  wifiUtils.stopWifi();
   delay(1000);
 
   Serial.print("Powering Down");

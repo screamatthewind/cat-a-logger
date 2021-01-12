@@ -1,6 +1,5 @@
 #include <Arduino.h>
 
-#include "main.h"
 #include "VoltageMonitor.h"
 
 const int voltageSensor = A0;
