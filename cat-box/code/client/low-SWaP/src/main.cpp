@@ -46,8 +46,8 @@ void setup()
 
   xTaskCreate(startListener, "ListenerTask", 3000, NULL, 1, NULL);
   xTaskCreate(startWifiTask, "StartWifiTask", 2500, NULL, 1, NULL); 
-//  xTaskCreate(voltageMonitorTask, "VoltageMonitorTask", 1024, NULL, 1, NULL); 
-//  xTaskCreate(healthCheckTask, "HealthCheckTask", 2500, NULL, 1, NULL); 
+  xTaskCreate(voltageMonitorTask, "VoltageMonitorTask", 1024, NULL, 1, NULL); 
+  xTaskCreate(healthCheckTask, "HealthCheckTask", 2500, NULL, 1, NULL); 
 
   #ifdef OTA
     xTaskCreate(deepSleepTask, "DeepSleepTask", 1024, NULL, 1, NULL);
