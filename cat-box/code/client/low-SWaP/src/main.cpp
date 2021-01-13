@@ -9,10 +9,10 @@
 #include "VoltageMonitor.h"
 
 #define SHOW_STACK_REMAINING 1
+#define OTA
 
 const int maxRunTime = 30; // seconds
 const int motionSensor = 27;
-const OperatingMode operatingMode = OTA; // cannot use LOW_SWAP and OTA at the same time
 
 QueueHandle_t mainQueue;
 const int queueSize = 20;
@@ -45,28 +45,29 @@ void setup()
   }
 
   xTaskCreate(startListener, "ListenerTask", 3000, NULL, 1, NULL);
-  xTaskCreate(startWifiTask, "StartWifiTask", 2048, NULL, 1, NULL); 
-  xTaskCreate(voltageMonitorTask, "VoltageMonitorTask", 1024, NULL, 1, NULL); 
-  xTaskCreate(healthCheckTask, "HealthCheckTask", 2048, NULL, 1, NULL); 
+  xTaskCreate(startWifiTask, "StartWifiTask", 2500, NULL, 1, NULL); 
+//  xTaskCreate(voltageMonitorTask, "VoltageMonitorTask", 1024, NULL, 1, NULL); 
+//  xTaskCreate(healthCheckTask, "HealthCheckTask", 2500, NULL, 1, NULL); 
 
-  if (operatingMode == LOW_SWAP)
+  #ifdef OTA
     xTaskCreate(deepSleepTask, "DeepSleepTask", 1024, NULL, 1, NULL);
+  #endif
 
-  // PIR Motion Sensor mode INPUT_PULLUP
+  // PIR Motion Sensor, set pin mode to INPUT_PULLUP and interrupt on RISING
   pinMode(motionSensor, INPUT_PULLUP);
-  // Set motionSensor pin as interrupt, assign interrupt function and set RISING mode
   attachInterrupt(digitalPinToInterrupt(motionSensor), motionDetected, RISING);
-
 }
 
 void loop()
 {
-  if ((operatingMode == OTA) && (ota.isStarted())) {
-    ota.keepAlive();
-    delay(100);
-  }
-  else
+  #ifdef OTA
+    if (ota.isStarted()) {
+      ota.keepAlive();
+      // delay(100);
+    }
+  #else
     delay(100000);
+  #endif
 }
 
 // https://randomnerdtutorials.com/esp32-pir-motion-sensor-interrupts-timers/
@@ -148,8 +149,13 @@ void startListener(void *parameter)
 {
   ReturnData receivedData;
 
-  for( int i=0; i<maxRunTime; i++ )
-  {
+  #ifdef OTA
+    for (;;) {
+      ota.keepAlive();
+
+  #else
+    for( int i=0; i<maxRunTime; i++ ) {
+  #endif
     if (xQueueReceive( mainQueue, &receivedData, 0 ) == pdPASS)
     {
       Serial.print("received: ");
@@ -157,11 +163,12 @@ void startListener(void *parameter)
       if (receivedData.dataType == WIFI_STARTED) {
         Serial.print("WiFi Started: ");
         Serial.println(receivedData.message);
-        if (operatingMode == OTA)
-        {
+
+        #ifdef OTA
           ota = Ota();
           ota.start();
-        }
+          Serial.println("OTA is Started");
+        #endif 
       }
       else if (receivedData.dataType == REST_POST_ERROR) {
         Serial.print("POST ERROR: ");
@@ -170,6 +177,8 @@ void startListener(void *parameter)
       else if (receivedData.dataType == VOLTAGE) {
         Serial.print("VOLTAGE: ");
         Serial.println(receivedData.message);
+        String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": " + String(STATUS_UPDATE) + "}}}";
+        restApi.callPost(httpRequestData);
       }
       else if (receivedData.dataType == HEALTH_CHECK_ERROR) {
         Serial.print("HEALTH_CHECK_ERROR: ");
@@ -179,7 +188,7 @@ void startListener(void *parameter)
         Serial.println(DataTypeStrings[receivedData.dataType]);
     }
 
-    delay(1000);
+    delay(100);
   }
 
   #ifdef SHOW_STACK_REMAINING
@@ -188,10 +197,6 @@ void startListener(void *parameter)
     Serial.print("startListener-stack-2: ");
     Serial.println(uxHighWaterMark);
   #endif
-
-  String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": " + String(STATUS_UPDATE) + "}}}";
-  restApi.callPost(httpRequestData);
-  delay(1000);
 
   wifiUtils.stopWifi();
   delay(1000);

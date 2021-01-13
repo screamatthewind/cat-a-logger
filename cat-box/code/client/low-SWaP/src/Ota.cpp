@@ -67,3 +67,15 @@ void Ota::keepAlive()
 {
     ArduinoOTA.handle();
 }
+
+// If the MCU is in a delay() it cannot respond to HTTP OTA requests
+// We do a "fake" looping delay and listen for incoming HTTP requests while waiting
+void Ota::delay(unsigned int ms) {
+	// Borrowed from mshoe007 @ https://github.com/scottchiefbaker/ESP-WebOTA/issues/8
+	decltype(millis()) last = millis();
+
+	while ((millis() - last) < ms) {
+		ArduinoOTA.handle();
+		::delay(5);
+	}
+}
