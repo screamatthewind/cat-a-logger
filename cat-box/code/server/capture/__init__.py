@@ -19,6 +19,7 @@ class VideoCapture(object):
     extended_time = None
 
     is_capturing = False
+    thread_lock = threading.Lock()
 
     logger = logging.getLogger(__name__)
 
@@ -43,8 +44,9 @@ class VideoCapture(object):
                 self.video_out.write(frame)  
 
                 if (time.time() - self.extended_time) > config.VIDEO_CAPTURE_SECS:
-                    self.video_out.release()
-                    self.is_capturing = False
+                    with self.thread_lock:
+                        self.video_out.release()
+                        self.is_capturing = False
 
 
     def start_capture(self):
@@ -62,11 +64,14 @@ class VideoCapture(object):
             out_filename = str(data_folder / filename)
 
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            self.video_out = cv2.VideoWriter(out_filename, fourcc, 20.0, (self.width, self.height)) 
 
-            self.start_time = time.time()
-            self.extended_time = self.start_time
-            self.is_capturing = True
+            with self.thread_lock:
+
+                self.video_out = cv2.VideoWriter(out_filename, fourcc, 20.0, (self.width, self.height)) 
+
+                self.start_time = time.time()
+                self.extended_time = self.start_time
+                self.is_capturing = True
 
         elif (time.time() - self.start_time) < config.VIDEO_CAPTURE_MAX_SECS:
             self.logger.info("Capture extended")
