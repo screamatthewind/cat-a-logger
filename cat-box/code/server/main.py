@@ -33,7 +33,7 @@ def create_app():
 if __name__ == "__main__":
     hostname = socket.gethostname()
     IPAddr = socket.gethostbyname(hostname)
-    print("Listening on http://" + IPAddr + ":5000")
+    logger.info("Listening on http://" + IPAddr + ":5000")
 
     app = create_app()
     app.run(host="0.0.0.0", debug=True)
