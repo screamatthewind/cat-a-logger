@@ -2,3 +2,4 @@
 **/*.lib
 **/*.sch-bak
 .ipynb_checkpoints
+/cat-box/code/server/*.avi
