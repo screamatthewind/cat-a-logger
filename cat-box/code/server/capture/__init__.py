@@ -47,6 +47,8 @@ class VideoCapture(object):
                     with self.thread_lock:
                         self.video_out.release()
                         self.is_capturing = False
+        
+                    self.logger.info("Capture stopped")
 
 
     def start_capture(self):
@@ -77,6 +79,8 @@ class VideoCapture(object):
             self.logger.info("Capture extended")
             self.extended_time = time.time()
 
+        else:
+            self.logger.info("Cannot extend capture")
 
         # video_in.release() 
 
