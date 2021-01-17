@@ -15,6 +15,8 @@ class VideoCapture(object):
     height = None
 
     start_time = None
+    extended_time = None
+
     is_capturing = False
 
 
@@ -33,13 +35,12 @@ class VideoCapture(object):
 
     def run(self):
         while True:
-            # print(datetime.datetime.now().__str__() + ' : Running task in the background')
             ret, frame = self.video_in.read()  
 
             if self.is_capturing == True:
                 self.video_out.write(frame)  
 
-                if (time.time() - self.start_time) > config.VIDEO_CAPTURE_SECS:
+                if (time.time() - self.extended_time) > config.VIDEO_CAPTURE_SECS:
                     self.video_out.release()
                     self.is_capturing = False
 
@@ -47,6 +48,8 @@ class VideoCapture(object):
     def start_capture(self):
 
         if self.is_capturing == False:
+
+            print("Capture started")
 
             timestr = time.strftime("%Y%m%d-%H%M%S")
             filename = config.VIDEO_CAPTURE_PREFIX + '-' + timestr + '.avi'
@@ -60,7 +63,13 @@ class VideoCapture(object):
             self.video_out = cv2.VideoWriter(out_filename, fourcc, 20.0, (self.width, self.height)) 
 
             self.start_time = time.time()
+            self.extended_time = self.start_time
             self.is_capturing = True
+
+        elif (time.time() - self.start_time) < config.VIDEO_CAPTURE_MAX_SECS:
+            print("Capture extended")
+            self.extended_time = time.time()
+
 
         # video_in.release() 
 
