@@ -1,6 +1,7 @@
 import os
 import cv2 
 import time
+import logging
 import threading
 from pathlib import Path
 
@@ -19,6 +20,7 @@ class VideoCapture(object):
 
     is_capturing = False
 
+    logger = logging.getLogger(__name__)
 
     def start_thread(self):
         self.video_in = cv2.VideoCapture(config.VIDEO_CAPTURE_SOURCE)
@@ -26,7 +28,7 @@ class VideoCapture(object):
         self.width = int(self.video_in.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.video_in.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-        print(self.width, self.height)
+        self.logger.info(f"Capture Size: {self.width} x {self.height}")
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -49,7 +51,7 @@ class VideoCapture(object):
 
         if self.is_capturing == False:
 
-            print("Capture started")
+            self.logger.info("Capture started")
 
             timestr = time.strftime("%Y%m%d-%H%M%S")
             filename = config.VIDEO_CAPTURE_PREFIX + '-' + timestr + '.avi'
@@ -67,7 +69,7 @@ class VideoCapture(object):
             self.is_capturing = True
 
         elif (time.time() - self.start_time) < config.VIDEO_CAPTURE_MAX_SECS:
-            print("Capture extended")
+            self.logger.info("Capture extended")
             self.extended_time = time.time()
 
 
