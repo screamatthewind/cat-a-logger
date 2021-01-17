@@ -28,7 +28,7 @@ void RestApi::callHealthCheck()
     if (WiFi.status() == WL_CONNECTED)
     {
         HTTPClient http;
-        String serverPath = serverName + "/api/check";
+        String serverPath = serverName + "/api/health_check";
 
         http.begin(serverPath);
 
@@ -69,12 +69,12 @@ void RestApi::callPost(String httpRequestData)
     if (WiFi.status() == WL_CONNECTED)
     {
         HTTPClient http;
-        String serverPath = serverName + "/api/catalogger";
+        String serverPath = serverName + "/api/process_event";
 
         http.begin(serverPath);
 
-        http.addHeader("Content-Type", "application/vnd.api+json");
-        http.addHeader("Accept", "application/vnd.api+json");
+        http.addHeader("Content-Type", "application/json");
+        // http.addHeader("Accept", "application/vnd.api+json");
 
         int httpResponseCode = http.POST(httpRequestData);
 

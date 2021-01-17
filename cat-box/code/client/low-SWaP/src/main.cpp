@@ -77,7 +77,7 @@ void IRAM_ATTR motionDetected() {
 
 void motionDetectedTask(void *parameter)
 {
-  String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"eventType\": " + String(MOTION_DETECTED) + "}}}";
+  String httpRequestData = "{\"eventType\": " + String(MOTION_DETECTED) + "}";
   restApi.callPost(httpRequestData);
 
   #ifdef SHOW_STACK_REMAINING
@@ -177,7 +177,7 @@ void startListener(void *parameter)
       else if (receivedData.dataType == VOLTAGE) {
         Serial.print("VOLTAGE: ");
         Serial.println(receivedData.message);
-        String httpRequestData = "{\"data\": {\"type\": \"catalogger\", \"attributes\": {\"voltage\": \"11.0\", \"eventType\": " + String(STATUS_UPDATE) + "}}}";
+        String httpRequestData = "{\"voltage\": \"11.0\", \"eventType\": " + String(STATUS_UPDATE) + "}";
         restApi.callPost(httpRequestData);
       }
       else if (receivedData.dataType == HEALTH_CHECK_ERROR) {
